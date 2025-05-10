@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AppClima" parent="Theme.Material3.DayNight.NoActionBar"/>
+
+    <style name="Theme.AppClima" parent="Base.Theme.AppClima"/>
+    
+    <style name="Theme.AppClima.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- (solo para API 31+) -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/splashScreenBackground</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/logo_climat</item>
+    </style>
+
+    <style name="ToolbarTitleBold" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+</resources>

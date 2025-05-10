@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Climat</string>
+
+    <string name="item_buscar_name">Buscar</string>
+    <string name="item_favorito_name">Favoritos</string>
+    
+    <string name="temp_format">%.1fºC</string>
+    <string name="iconos_del_clima_sol_nubes_lluvia">Íconos del clima (sol, nubes, lluvia)</string>
+    <string name="otras_ciudades">Otras Ciudades</string>
+    <string name="lista_de_ciudades_disponibles">Lista de ciudades disponibles</string>
+</resources>

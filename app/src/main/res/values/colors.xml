@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--Color app-->
+    <color name="color_primary">#3ED5FF</color>
+
+    <!--Color Splashscreen-->
+    <color name="splashScreenBackground">#3ED5FF</color>
+
+    <!--Color CardViews-->
+    <color name="cardViewBackground_opacity">#B300C8FF</color>
+    <color name="cardViewBackground">#00C8FF</color>
+
+    <!--Color Texto-->
+    <color name="gris_subtitulo">#333333</color>
+    <color name="azul_marino_ciudad">#2C3E50</color>
+    <color name="gris_ciudad">#424242</color>
+
+    <color name="color_grados">#000000</color>
+    <color name="color_ciudad">#FFFFFF</color>
+    <color name="color_precipitacion">#FFFFFF</color>
+
+    <color name="color_fondoPantalla">#6AAFB8</color>
+    <color name="color_toolbar">#327B85</color>
+    <color name="color_titulo">#FFFFFF</color>
+
+    <color name="color_boton_ciudades">#2D4EDB</color>
+</resources>
