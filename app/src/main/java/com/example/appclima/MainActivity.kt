@@ -19,17 +19,20 @@ import com.bumptech.glide.Glide
 import com.example.appclima.api.OpenWeather
 import com.example.appclima.api.RetrofitClient
 import com.example.appclima.databinding.ActivityMainBinding
+import com.example.appclima.model.CityResponse
+import com.example.appclima.model.WeatherResponse
 import com.example.appclima.recycleview.CityAdapter
 import com.example.appclima.recycleview.CityInfoAdapter
-import com.example.appclima.utilities.Location
+import com.example.appclima.utilities.AppLocation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var ubicacion: Location
+    private lateinit var ubicacion: AppLocation
     private lateinit var viewModel: CitySearchViewModel
     private lateinit var adapterCity: CityAdapter
     private lateinit var adapterCities: CityInfoAdapter
@@ -42,71 +45,78 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ubicacion = Location(this)
+        ubicacion = AppLocation(this)
         ubicacion.enableLocation()
 
         binding.toolbar.setTitle(R.string.app_name)
         setSupportActionBar(binding.toolbar)
 
-
-        getMainCity()
+        ubicacion.getActualLocation { lat, lon ->
+            getMainCity(lat, lon)
+            getCities(lat, lon)
+        }
         initRecyclerViews()
-        getCities()
 
         viewModel = ViewModelProvider(this)[CitySearchViewModel::class.java]
         viewModel.suggestions.observe(this) { cities ->
             adapterCity.updateData(cities)
             binding.rvSuggestions.visibility = if (cities.isNotEmpty()) View.VISIBLE else View.GONE
         }
+
+        binding.mcvPrincipal.setOnClickListener {
+            startActivity(Intent(this, DetailsActivity::class.java))
+        }
     }
 
-    private fun getMainCity() {
+    private fun getMainCity(latitude: Double, longitude: Double) {
         if (ubicacion.isPermissionGrantedOnce()) {
-            ubicacion.getActualLocation { latitude, longitude ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val responseName = RetrofitClient.cityNamesRetrofit
-                            .getCityNameReverse(latitude, longitude, apiKey = OpenWeather.API_KEY)
-                        val responseWeather = RetrofitClient.cityWeather
-                            .getCityWeather(latitude, longitude, OpenWeather.API_KEY)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val responseNameList = RetrofitClient.cityNamesRetrofit
+                        .getCityNameReverse(latitude, longitude, apiKey = OpenWeather.API_KEY)
+                    val responseName = responseNameList.firstOrNull()!!
+                    val responseWeather = RetrofitClient.cityWeather
+                        .getCityWeather(latitude, longitude, OpenWeather.API_KEY)
 
-                        withContext(Dispatchers.Main) {
-                            placeWeather(responseName, responseWeather)
-                        }
-                    }catch (e: Exception) {
-                        Log.e("MAIN_ACTIVITY", "Error al obtener el tiempo: ${e.message}")
+                    withContext(Dispatchers.Main) {
+                        placeWeather(responseName, responseWeather)
                     }
+                } catch (e: Exception) {
+                    Log.e("MAIN_ACTIVITY", "Error al obtener el tiempo: ${e.message}")
                 }
             }
         }
     }
 
     private fun placeWeather(cityName: CityResponse, cityWeather: WeatherResponse) {
-        binding.tvTemperatura.text = getString(R.string.temp_format, cityWeather.main.temp)
-        binding.tvDescripcion.text = cityWeather.weather[0].description
+        binding.tvTemperatura.text = getString(R.string.temp_format, cityWeather.main.temp.toInt())
+        binding.tvDescripcion.text = cityWeather.weather[0].description.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
+            Locale.getDefault()) else it.toString() }
         Glide.with(this)
-            .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
-            .into(binding.ivImagenPrecipitacion)
+        .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
+        .into(binding.ivImagenPrecipitacion)
         binding.tvCiudad.text = cityName.name
         binding.tvComunidad.text = cityName.state
-        binding.tvTempMax.text = getString(R.string.temp_format, cityWeather.main.tempMax)
-        binding.tvTempMin.text = getString(R.string.temp_format, cityWeather.main.tempMin)
+        binding.tvTempMax.text = getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
+        binding.tvTempMin.text = getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
     }
 
-    private fun getCities() {
-        ubicacion.getActualLocation { latitude, longitude ->
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val response = RetrofitClient.nearbyCitiesWeather.getNearbyCitiesWeather(latitude, longitude, apiKey = OpenWeather.API_KEY)
-                    val cities = response.list
-                    Log.d("CIUDADES", "Ciudades encontradas: $cities")
+    private fun getCities(latitude: Double, longitude: Double) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetrofitClient.nearbyCitiesWeather.getNearbyCitiesWeather(
+                    latitude,
+                    longitude,
+                    apiKey = OpenWeather.API_KEY
+                )
+                val cities = response.list
+                Log.d("CIUDADES", "Ciudades encontradas: $cities")
 
-                    withContext(Dispatchers.Main) {
-                        adapterCities.updateData(cities)
-                    }
-                } catch (e: Exception) {
-                    Log.e("CITY_WEATHER_RECYCLER", "Error: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    adapterCities.updateData(cities)
                 }
+            } catch (e: Exception) {
+                Log.e("CITY_WEATHER_RECYCLER", "Error: ${e.message}")
             }
         }
     }
@@ -123,20 +133,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun onItemSelected(city: CityResponse) {
         val intent = Intent(this, DetailsActivity::class.java)
-//        intent.putExtra("LAT", city.lat)
-//        intent.putExtra("LON", city.lon)
-//        intent.putExtra("NAME", city.name)
         startActivity(intent)
-        Toast.makeText(this, "Hasta aquí bien", Toast.LENGTH_SHORT).show()
     }
 
     private fun onItemSelected(weatherCity: WeatherResponse) {
         val intent = Intent(this, DetailsActivity::class.java)
-//        intent.putExtra("LAT", city.lat)
-//        intent.putExtra("LON", city.lon)
-//        intent.putExtra("NAME", city.name)
         startActivity(intent)
-        Toast.makeText(this, "Hasta aquí bien", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

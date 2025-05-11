@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appclima.api.OpenWeather
 import com.example.appclima.api.RetrofitClient
+import com.example.appclima.model.CityResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,12 +26,12 @@ class CitySearchViewModel: ViewModel() {
                 try {
                     val result = RetrofitClient.cityNamesRetrofit
                         .getCityNames(query, 5, OpenWeather.API_KEY)
-                    _suggestions.postValue(result)
+                    _suggestions.value = result
                 }catch (e: Exception) {
                     Log.e("CitySearchViewModel", "Error buscando ciudad: ${e.message}")
                 }
             }else {
-                _suggestions.postValue(emptyList())
+                _suggestions.value = emptyList()
             }
         }
 

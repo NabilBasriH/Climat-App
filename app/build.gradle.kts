@@ -17,6 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "API_KEY", "\"${project.findProperty("API_KEY")}\"")
+        buildConfigField("String", "API_KEY_UV", "\"${project.findProperty("API_KEY_UV")}\"")
     }
 
     buildTypes {

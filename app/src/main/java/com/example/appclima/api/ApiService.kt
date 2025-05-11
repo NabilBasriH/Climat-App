@@ -1,9 +1,11 @@
 package com.example.appclima.api
 
-import com.example.appclima.CityResponse
-import com.example.appclima.NearbyCityResponse
-import com.example.appclima.WeatherResponse
+import com.example.appclima.model.CityResponse
+import com.example.appclima.model.CityUv
+import com.example.appclima.model.NearbyCityResponse
+import com.example.appclima.model.WeatherResponse
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface ApiService {
@@ -30,7 +32,7 @@ interface ApiService {
         @Query("lon") lon: Double,
         @Query("limit") limit: Int = 1,
         @Query("appid") apiKey: String
-    ): CityResponse
+    ): List<CityResponse>
 
     @GET("data/2.5/find")
     suspend fun getNearbyCitiesWeather(

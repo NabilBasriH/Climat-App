@@ -12,7 +12,7 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
-class Location(private val activity: Activity) {
+class AppLocation(private val activity: Activity) {
     companion object {
         const val REQUEST_CODE_LOCATION = 100
     }
@@ -53,8 +53,8 @@ class Location(private val activity: Activity) {
     }
 
     fun handlePermissionResult(requestCode: Int, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("UBICACIÓN", "Permiso de ubicación concedido")
             } else {
                 Toast.makeText(

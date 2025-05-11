@@ -4,8 +4,17 @@
     <string name="item_buscar_name">Buscar</string>
     <string name="item_favorito_name">Favoritos</string>
     
-    <string name="temp_format">%.1fºC</string>
+    <string name="temp_format">%dºC</string>
+    <string name="temp_max_format">Max: %1$dºC</string>
+    <string name="temp_min_format">Min: %1$dºC</string>
+
     <string name="iconos_del_clima_sol_nubes_lluvia">Íconos del clima (sol, nubes, lluvia)</string>
     <string name="otras_ciudades">Otras Ciudades</string>
     <string name="lista_de_ciudades_disponibles">Lista de ciudades disponibles</string>
+    <string name="sensacion">Sensación</string>
+    <string name="nubes">Nubes</string>
+    <string name="humedad">Humedad</string>
+    <string name="lluvia">Lluvia</string>
+    <string name="viento">Viento</string>
+    <string name="uv">UV</string>
 </resources>

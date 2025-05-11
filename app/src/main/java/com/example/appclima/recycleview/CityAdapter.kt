@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appclima.CityResponse
+import com.example.appclima.model.CityResponse
 import com.example.appclima.R
 import com.example.appclima.databinding.ItemListCitySearchBinding
 
@@ -26,7 +26,7 @@ class CityAdapter(private var cities: List<CityResponse>, private val onClickLis
 
         fun render(city: CityResponse, onClickListener: (CityResponse) -> Unit) {
             binding.tvNombre.text = city.name
-            binding.tvPais.text = city.state
+            binding.tvPais.text = city.state ?: "N/A"
             binding.tvPaisCorto.text = city.country
 
             itemView.setOnClickListener {

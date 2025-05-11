@@ -1,14 +1,12 @@
 package com.example.appclima.recycleview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.appclima.CityResponse
 import com.example.appclima.R
-import com.example.appclima.WeatherResponse
+import com.example.appclima.model.WeatherResponse
 import com.example.appclima.databinding.ItemListCityOtherBinding
 
 class CityInfoAdapter(private var weatherCities: List<WeatherResponse>, private val onClickListener: (WeatherResponse) -> Unit): RecyclerView.Adapter<CityInfoAdapter.CityInfoHolder>() {
@@ -28,7 +26,7 @@ class CityInfoAdapter(private var weatherCities: List<WeatherResponse>, private 
         private val binding = ItemListCityOtherBinding.bind(view)
 
         fun render(weather: WeatherResponse, onClickListener: (WeatherResponse) -> Unit) {
-            binding.tvTempView.text = itemView.context.getString(R.string.temp_format, weather.main.temp)
+            binding.tvTempView.text = itemView.context.getString(R.string.temp_format, weather.main.temp.toInt())
             binding.tvCiudadNameView.text = weather.name
 
             Glide.with(itemView)

@@ -1,30 +1,37 @@
 package com.example.appclima.api
 
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    val cityNamesRetrofit: ApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-    }
+    // OkHttpClient creation with the interceptor
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(HeaderInterceptor())
+        .build()
 
-    val cityWeather: ApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-    }
+    // Retrofit configuration
+    private val retrofitOpenWeather = Retrofit.Builder()
+        .baseUrl("https://api.openweathermap.org/")
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    val nearbyCitiesWeather: ApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-    }
+    // ApiService instance
+    private val apiServiceOpenWeather = retrofitOpenWeather.create(ApiService::class.java)
+
+    // Functions to access endpoints
+    val cityNamesRetrofit: ApiService = apiServiceOpenWeather
+    val cityWeather: ApiService = apiServiceOpenWeather
+    val nearbyCitiesWeather: ApiService = apiServiceOpenWeather
+
+    private val retrofitOpenUV = Retrofit.Builder()
+        .baseUrl("https://api.openuv.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(client)
+        .build()
+
+    private val apiServiceOpenUV = retrofitOpenUV.create(OpenUVService::class.java)
+
+    val cityUv: OpenUVService = apiServiceOpenUV
 }

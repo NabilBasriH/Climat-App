@@ -12,6 +12,7 @@
     <!--Color CardViews-->
     <color name="cardViewBackground_opacity">#B300C8FF</color>
     <color name="cardViewBackground">#00C8FF</color>
+    <color name="cardViewBackground_transparent">#00FFFFFF</color>
 
     <!--Color Texto-->
     <color name="gris_subtitulo">#333333</color>

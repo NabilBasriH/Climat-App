@@ -1,4 +1,4 @@
-package com.example.appclima
+package com.example.appclima.model
 
 data class CityResponse(
     val name: String,
