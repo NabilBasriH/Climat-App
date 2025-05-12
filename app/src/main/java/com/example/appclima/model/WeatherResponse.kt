@@ -20,6 +20,12 @@ data class Main(
     val humidity: Int
 )
 
-data class Wind(val speed: Double)
-data class Rain(@SerializedName("1h") val mmH: Double)
-data class Clouds(val all: Int)
+data class Wind(
+    val speed: Double
+)
+data class Rain(
+    @SerializedName("1h") val mmH: Double
+)
+data class Clouds(
+    val all: Int
+)

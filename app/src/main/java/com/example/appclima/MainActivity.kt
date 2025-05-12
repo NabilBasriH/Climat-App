@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
         .into(binding.ivImagenPrecipitacion)
         binding.tvCiudad.text = cityName.name
-        binding.tvComunidad.text = cityName.state
+        binding.tvComunidad.text = cityWeather.name
         binding.tvTempMax.text = getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
         binding.tvTempMin.text = getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
     }

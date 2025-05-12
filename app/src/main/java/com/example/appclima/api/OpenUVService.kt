@@ -10,6 +10,6 @@ interface OpenUVService {
     suspend fun getCityUV(
         @Header("x-access-token") apiKey: String,
         @Query("lat") lat: Double,
-        @Query("lon") lon: Double
+        @Query("lng") lng: Double
     ): CityUv
 }

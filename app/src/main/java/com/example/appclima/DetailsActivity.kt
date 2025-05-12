@@ -51,39 +51,23 @@ class DetailsActivity : AppCompatActivity() {
                     val responseNameList = RetrofitClient.cityNamesRetrofit
                         .getCityNameReverse(latitude, longitude, apiKey = OpenWeather.API_KEY)
                     val responseName = responseNameList.firstOrNull()!!
+
                     val responseWeather = RetrofitClient.cityWeather
                         .getCityWeather(latitude, longitude, OpenWeather.API_KEY)
-                    try {
-                        val responseUv = RetrofitClient.cityUv
-                            .getCityUV(apiKey = OpenUv.API_KEY, lat = latitude, lon = longitude)
-                    }catch (e: Exception) {
-                        Log.e("UV", "Error al uv: ${e.message}")
-                    }
+                    Log.d("WEATHER_JSON", "WEATHER Result: $responseWeather")
 
-//                    withContext(Dispatchers.Main) {
-//                        placeWeather(responseName, responseWeather, responseUv)
-//                    }
+                    val responseUv = RetrofitClient.cityUv
+                        .getCityUV(apiKey = OpenUv.API_KEY_UV, lat = latitude, lng = longitude)
+
+                    withContext(Dispatchers.Main) {
+                        placeWeather(responseName, responseWeather, responseUv)
+                    }
                 } catch (e: Exception) {
                     Log.e("DETAILS_ACTIVITY", "Error al obtener el tiempo: ${e.message}")
                 }
             }
         }
     }
-
-//    private fun cityWeather(lat: Double, lon: Double, cityName: String) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                val response = RetrofitClient.cityWeather
-//                    .getCityWeather(lat, lon, OpenWeather.API_KEY)
-//
-//                withContext(Dispatchers.Main) {
-//                    placeWeather(response, cityName)
-//                }
-//            }catch (e: Exception) {
-//                Log.e("DETAILS_ACTIVITY", "Error al obtener el tiempo: ${e.message}")
-//            }
-//        }
-//    }
 
     private fun placeWeather(cityName: CityResponse, cityWeather: WeatherResponse, cityUv: CityUv) {
         binding.tvDTemperatura.text = getString(R.string.temp_format, cityWeather.main.temp.toInt())
@@ -96,16 +80,17 @@ class DetailsActivity : AppCompatActivity() {
             .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
             .into(binding.ivDImagenPrecipitacion)
         binding.tvDCiudad.text = cityName.name
-        binding.tvDComunidad.text = cityName.state
+        binding.tvDComunidad.text = cityWeather.name
         binding.tvDTempMax.text =
             getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
         binding.tvDTempMin.text =
             getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
-        binding.tvSensationTemp.text = getString(R.string.temp_format, cityWeather.main.feelsLike)
+        binding.tvSensationTemp.text =
+            getString(R.string.temp_format, cityWeather.main.feelsLike.toInt())
         binding.tvCloudTemp.text = cityWeather.clouds.all.toString()
         binding.tvRaindropTemp.text = cityWeather.main.humidity.toString()
-        binding.tvRaindropsTemp.text = cityWeather.rain?.mmH.toString()
+        binding.tvRaindropsTemp.text = cityWeather.rain?.mmH?.toString() ?: "N/A"
         binding.tvWindTemp.text = cityWeather.wind.speed.toString()
-        binding.tvUvTemp.text = cityUv.uv.toString()
+        binding.tvUvTemp.text = cityUv.result.uv.toString()
     }
 }
