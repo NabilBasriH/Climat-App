@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 
-class Network() {
+class Network {
     companion object {
         fun hasNetwork(activity: AppCompatActivity): Boolean {
             val connectivityManager =

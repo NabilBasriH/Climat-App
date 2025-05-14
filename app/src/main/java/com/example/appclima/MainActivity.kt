@@ -21,9 +21,11 @@ import com.example.appclima.api.RetrofitClient
 import com.example.appclima.databinding.ActivityMainBinding
 import com.example.appclima.model.CityResponse
 import com.example.appclima.model.WeatherResponse
-import com.example.appclima.recycleview.CityAdapter
-import com.example.appclima.recycleview.CityInfoAdapter
+import com.example.appclima.recycleview.SearchCityAdapter
+import com.example.appclima.recycleview.CityListAdapter
 import com.example.appclima.utilities.AppLocation
+import com.example.appclima.utilities.Geo
+import com.example.appclima.utilities.Network
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,9 +36,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var ubicacion: AppLocation
     private lateinit var viewModel: CitySearchViewModel
-    private lateinit var adapterCity: CityAdapter
-    private lateinit var adapterCities: CityInfoAdapter
+    private lateinit var adapterSearchCity: SearchCityAdapter
+    private lateinit var adapterCityList: CityListAdapter
+
     private var lastTextSearch: String = ""
+    private var cityName: String = ""
+    private var currentLat: Double = 0.0
+    private var currentLon: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -51,20 +57,35 @@ class MainActivity : AppCompatActivity() {
         binding.toolbar.setTitle(R.string.app_name)
         setSupportActionBar(binding.toolbar)
 
+        if (!Network.hasNetwork(this)) {
+            Toast.makeText(this, "No hay conexión a internet", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         ubicacion.getActualLocation { lat, lon ->
+            currentLat = lat
+            currentLon = lon
             getMainCity(lat, lon)
             getCities(lat, lon)
         }
-        initRecyclerViews()
+
+        adapterCityList = CityListAdapter(emptyList()) { onItemSelected(cityName, currentLat, currentLon) }
+        binding.rvCities.layoutManager = LinearLayoutManager(this)
+        binding.rvCities.adapter = adapterCityList
+
+        adapterSearchCity = SearchCityAdapter(emptyList()) { city ->
+            onItemSelected(city.name, city.lat, city.lon) }
+        binding.rvSuggestions.layoutManager = LinearLayoutManager(this)
+        binding.rvSuggestions.adapter = adapterSearchCity
 
         viewModel = ViewModelProvider(this)[CitySearchViewModel::class.java]
         viewModel.suggestions.observe(this) { cities ->
-            adapterCity.updateData(cities)
+            adapterSearchCity.updateData(cities)
             binding.rvSuggestions.visibility = if (cities.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
         binding.mcvPrincipal.setOnClickListener {
-            startActivity(Intent(this, DetailsActivity::class.java))
+            onItemSelected(cityName, currentLat, currentLon)
         }
     }
 
@@ -88,17 +109,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun placeWeather(cityName: CityResponse, cityWeather: WeatherResponse) {
+    private fun placeWeather(cityResponse: CityResponse, cityWeather: WeatherResponse) {
         binding.tvTemperatura.text = getString(R.string.temp_format, cityWeather.main.temp.toInt())
         binding.tvDescripcion.text = cityWeather.weather[0].description.replaceFirstChar { if (it.isLowerCase()) it.titlecase(
             Locale.getDefault()) else it.toString() }
         Glide.with(this)
         .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
         .into(binding.ivImagenPrecipitacion)
-        binding.tvCiudad.text = cityName.name
-        binding.tvComunidad.text = cityWeather.name
+        binding.tvCiudad.text = cityResponse.name
+        binding.tvComunidad.text = cityResponse.state
         binding.tvTempMax.text = getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
         binding.tvTempMin.text = getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
+        cityName = cityResponse.name
     }
 
     private fun getCities(latitude: Double, longitude: Double) {
@@ -110,10 +132,20 @@ class MainActivity : AppCompatActivity() {
                     apiKey = OpenWeather.API_KEY
                 )
                 val cities = response.list
-                Log.d("CIUDADES", "Ciudades encontradas: $cities")
+                val groupedByName = cities
+                    .filter { city ->
+                        val distance = Geo.distanceInKm(latitude, longitude, city.coord.lat, city.coord.lon)
+                        distance > 0.5
+                    }
+                    .groupBy { it.name }
+                val filteredCities = groupedByName.map { (_, duplicates) ->
+                    duplicates.minByOrNull { city ->
+                        Geo.distanceInKm(latitude, longitude, city.coord.lat, city.coord.lon)
+                    }!!
+                }
 
                 withContext(Dispatchers.Main) {
-                    adapterCities.updateData(cities)
+                    adapterCityList.updateData(filteredCities)
                 }
             } catch (e: Exception) {
                 Log.e("CITY_WEATHER_RECYCLER", "Error: ${e.message}")
@@ -121,23 +153,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initRecyclerViews() {
-        adapterCities = CityInfoAdapter(emptyList()) { weatherCity -> onItemSelected(weatherCity) }
-        binding.rvCities.layoutManager = LinearLayoutManager(this)
-        binding.rvCities.adapter = adapterCities
-
-        adapterCity = CityAdapter(emptyList()) { city -> onItemSelected(city) }
-        binding.rvSuggestions.layoutManager = LinearLayoutManager(this)
-        binding.rvSuggestions.adapter = adapterCity
-    }
-
-    private fun onItemSelected(city: CityResponse) {
+    private fun onItemSelected(name: String, lat: Double, lon: Double) {
         val intent = Intent(this, DetailsActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun onItemSelected(weatherCity: WeatherResponse) {
-        val intent = Intent(this, DetailsActivity::class.java)
+        intent.putExtra("NAME", name)
+        intent.putExtra("LATITUDE", lat)
+        intent.putExtra("LONGITUDE", lon)
         startActivity(intent)
     }
 
@@ -146,7 +166,7 @@ class MainActivity : AppCompatActivity() {
 
         val searchMenuItem = menu?.findItem(R.id.item_buscar)
         val searchView = searchMenuItem?.actionView as SearchView
-        searchView.queryHint = "Albatera"
+        searchView.queryHint = "Tres letras mínimo"
 
         searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
@@ -162,6 +182,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                binding.rvSuggestions.visibility = View.GONE
+                searchView.setQuery("", false)
                 // Asegurarse de que la flecha no vuelve a aparecer
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
                 supportActionBar?.setHomeButtonEnabled(false)

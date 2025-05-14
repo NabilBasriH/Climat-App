@@ -1,12 +1,12 @@
 package com.example.appclima
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.appclima.api.OpenUv
 import com.example.appclima.api.OpenWeather
@@ -16,11 +16,11 @@ import com.example.appclima.model.CityResponse
 import com.example.appclima.model.CityUv
 import com.example.appclima.model.WeatherResponse
 import com.example.appclima.utilities.AppLocation
+import com.example.appclima.utilities.Network
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
 import java.util.Locale
 
 class DetailsActivity : AppCompatActivity() {
@@ -34,17 +34,22 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(binding.root)
         ubicacion = AppLocation(this)
 
-        binding.toolbarDetails.setTitle(R.string.app_name)
-        setSupportActionBar(binding.toolbarDetails)
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        val cityName = intent.getStringExtra("NAME") ?: ""
+        val lat = intent.getDoubleExtra("LATITUDE", 0.0)
+        val lon = intent.getDoubleExtra("LONGITUDE", 0.0)
 
-        ubicacion.getActualLocation { lat, lon ->
-            getCityWeather(lat, lon)
-        }
+        setSupportActionBar(binding.toolbarDetails)
+        supportActionBar?.title = cityName
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        getCityWeather(lat, lon)
     }
 
     private fun getCityWeather(latitude: Double, longitude: Double) {
+        if (!Network.hasNetwork(this)) {
+            Toast.makeText(this, "No hay conexión a internet", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (ubicacion.isPermissionGrantedOnce()) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -87,10 +92,23 @@ class DetailsActivity : AppCompatActivity() {
             getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
         binding.tvSensationTemp.text =
             getString(R.string.temp_format, cityWeather.main.feelsLike.toInt())
-        binding.tvCloudTemp.text = cityWeather.clouds.all.toString()
-        binding.tvRaindropTemp.text = cityWeather.main.humidity.toString()
-        binding.tvRaindropsTemp.text = cityWeather.rain?.mmH?.toString() ?: "N/A"
-        binding.tvWindTemp.text = cityWeather.wind.speed.toString()
-        binding.tvUvTemp.text = cityUv.result.uv.toString()
+        binding.tvCloudTemp.text = getString(R.string.temp_percent_format, cityWeather.clouds.all)
+        binding.tvRaindropTemp.text = getString(R.string.temp_percent_format, cityWeather.main.humidity)
+        binding.tvRaindropsTemp.text = cityWeather.rain?.mmH?.let {
+            getString(R.string.temp_rain_format, it)
+        } ?: "N/A"
+        val windSpeed = cityWeather.wind.speed * 3.6
+        binding.tvWindTemp.text = getString(R.string.temp_speed_format, windSpeed.toInt())
+        binding.tvUvTemp.text = getString(R.string.temp_uv_format, cityUv.result.uv)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

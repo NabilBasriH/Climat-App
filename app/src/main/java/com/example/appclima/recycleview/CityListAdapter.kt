@@ -9,7 +9,7 @@ import com.example.appclima.R
 import com.example.appclima.model.WeatherResponse
 import com.example.appclima.databinding.ItemListCityOtherBinding
 
-class CityInfoAdapter(private var weatherCities: List<WeatherResponse>, private val onClickListener: (WeatherResponse) -> Unit): RecyclerView.Adapter<CityInfoAdapter.CityInfoHolder>() {
+class CityListAdapter(private var weatherCities: List<WeatherResponse>, private val onClickListener: (WeatherResponse) -> Unit): RecyclerView.Adapter<CityListAdapter.CityInfoHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityInfoHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 

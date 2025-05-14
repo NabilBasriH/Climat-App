@@ -3,6 +3,7 @@ package com.example.appclima.model
 import com.google.gson.annotations.SerializedName
 
 data class WeatherResponse(
+    val coord: Coord,
     val name: String,
     val weather: List<Weather>,
     val main: Main,
@@ -11,7 +12,13 @@ data class WeatherResponse(
     val clouds: Clouds
 )
 
+data class Coord(
+    val lat: Double,
+    val lon: Double
+)
+
 data class Weather(val description: String, val icon: String)
+
 data class Main(
     val temp: Double,
     @SerializedName("feels_like") val feelsLike: Double,

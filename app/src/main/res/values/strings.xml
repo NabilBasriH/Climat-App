@@ -7,6 +7,10 @@
     <string name="temp_format">%dºC</string>
     <string name="temp_max_format">Max: %1$dºC</string>
     <string name="temp_min_format">Min: %1$dºC</string>
+    <string name="temp_percent_format">%d%%</string>
+    <string name="temp_rain_format">%1$d mm/h</string>
+    <string name="temp_speed_format">%d km/h</string>
+    <string name="temp_uv_format">%.2f</string>
 
     <string name="iconos_del_clima_sol_nubes_lluvia">Íconos del clima (sol, nubes, lluvia)</string>
     <string name="otras_ciudades">Otras Ciudades</string>

@@ -8,7 +8,10 @@ import com.example.appclima.model.CityResponse
 import com.example.appclima.R
 import com.example.appclima.databinding.ItemListCitySearchBinding
 
-class CityAdapter(private var cities: List<CityResponse>, private val onClickListener: (CityResponse) -> Unit): RecyclerView.Adapter<CityAdapter.CityHolder>() {
+class SearchCityAdapter(
+    private var cities: List<CityResponse>,
+    private val onClickListener: (CityResponse) -> Unit
+): RecyclerView.Adapter<SearchCityAdapter.CityHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 

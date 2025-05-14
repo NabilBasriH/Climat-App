@@ -38,7 +38,7 @@ interface ApiService {
     suspend fun getNearbyCitiesWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("cnt") count: Int = 5,
+        @Query("cnt") count: Int = 10,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "es"
