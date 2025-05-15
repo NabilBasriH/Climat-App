@@ -85,7 +85,7 @@ class DetailsActivity : AppCompatActivity() {
             .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
             .into(binding.ivDImagenPrecipitacion)
         binding.tvDCiudad.text = cityName.name
-        binding.tvDComunidad.text = cityWeather.name
+        binding.tvDComunidad.text = cityName.state ?: "N/A"
         binding.tvDTempMax.text =
             getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
         binding.tvDTempMin.text =

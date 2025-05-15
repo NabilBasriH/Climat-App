@@ -69,7 +69,8 @@ class MainActivity : AppCompatActivity() {
             getCities(lat, lon)
         }
 
-        adapterCityList = CityListAdapter(emptyList()) { onItemSelected(cityName, currentLat, currentLon) }
+        adapterCityList = CityListAdapter(emptyList()) { city ->
+            onItemSelected(city.name, city.coord.lat, city.coord.lon) }
         binding.rvCities.layoutManager = LinearLayoutManager(this)
         binding.rvCities.adapter = adapterCityList
 
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         .load("https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png")
         .into(binding.ivImagenPrecipitacion)
         binding.tvCiudad.text = cityResponse.name
-        binding.tvComunidad.text = cityResponse.state
+        binding.tvComunidad.text = cityResponse.state ?: ""
         binding.tvTempMax.text = getString(R.string.temp_max_format, cityWeather.main.tempMax.toInt())
         binding.tvTempMin.text = getString(R.string.temp_min_format, cityWeather.main.tempMin.toInt())
         cityName = cityResponse.name
@@ -166,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
         val searchMenuItem = menu?.findItem(R.id.item_buscar)
         val searchView = searchMenuItem?.actionView as SearchView
-        searchView.queryHint = "Tres letras mínimo"
+        searchView.queryHint = getString(R.string.min_three_letter)
 
         searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {

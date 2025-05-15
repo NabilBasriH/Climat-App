@@ -29,7 +29,7 @@ class SearchCityAdapter(
 
         fun render(city: CityResponse, onClickListener: (CityResponse) -> Unit) {
             binding.tvNombre.text = city.name
-            binding.tvPais.text = city.state ?: "N/A"
+            binding.tvPais.text = city.state ?: ""
             binding.tvPaisCorto.text = city.country
 
             itemView.setOnClickListener {
