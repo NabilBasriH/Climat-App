@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".presentation.favourites.FavouritesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarFavourites"
+        android:layout_width="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color_primary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/Theme.AppCompat.Light"
+        app:titleTextAppearance="@style/ToolbarTitleBold" />
+
+    <View
+        android:id="@+id/vTopLine"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/toolbarFavourites"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvFavouriteCities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Ciudades guardadas"
+            android:layout_marginTop="80dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCities"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/lista_de_ciudades_favoritas"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFavouriteCities" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,2 +1,3 @@
-# Rename this file to gradle.properties and insert your real API key
-API_KEY=your_api_key_here
+# Rename this file to gradle.properties and insert your real API key of (OpenWeatherMap and OpenUV)
+API_KEY=your_openweathermap_api_key_here
+API_KEY_UV=your_openuv_api_key_here

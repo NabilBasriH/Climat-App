@@ -7,12 +7,10 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginHorizontal="12dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/cardViewBackground"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/white"
@@ -21,11 +19,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="10dp"
             android:paddingVertical="8dp">
 
             <TextView
-                android:id="@+id/tvTempView"
+                android:id="@+id/tvFTempView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
@@ -36,7 +34,7 @@
                 tools:text="23ºC" />
 
             <TextView
-                android:id="@+id/tvCiudadNameView"
+                android:id="@+id/tvFCiudadNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-8dp"
@@ -44,16 +42,19 @@
                 android:textColor="@color/gris_ciudad"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTempView"
+                app:layout_constraintTop_toBottomOf="@id/tvFTempView"
                 tools:text="Cox" />
 
             <ImageView
-                android:id="@+id/ivImagenPrepView"
-                android:layout_width="78dp"
-                android:layout_height="78dp"
+                android:id="@+id/ivFImagenPrepView"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:contentDescription="@string/iconos_del_clima_sol_nubes_lluvia"
                 android:src="@drawable/ic_launcher_background"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/tvFCiudadNameView"
+                app:layout_constraintStart_toEndOf="@+id/tvFTempView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
