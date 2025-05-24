@@ -3,6 +3,7 @@ package com.example.appclima.presentation.details
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -46,10 +47,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun getCityWeather(latitude: Double, longitude: Double) {
-        if (!Network.hasNetwork(this)) {
-            Toast.makeText(this, getString(R.string.no_network), Toast.LENGTH_SHORT).show()
-            return
-        }
+        if (!Network.checkNetwork(this)) return
         if (ubicacion.isPermissionGrantedOnce()) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -66,6 +64,8 @@ class DetailsActivity : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         placeWeather(responseName, responseWeather, responseUv)
+                        binding.progressView.progressContainer.visibility = View.GONE
+                        binding.main.visibility = View.VISIBLE
                     }
                 } catch (e: Exception) {
                     Log.e("DETAILS_ACTIVITY", "Error al obtener el tiempo: ${e.message}")

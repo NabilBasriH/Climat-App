@@ -34,4 +34,5 @@
     <string name="activate_location_permission">Activar Permisos Ubicación</string>
     <string name="activate_location_permission_message">Los permisos están desactivados. Por favor, actívelos para poder acceder a tu ubicación.</string>
     <string name="no_network">No hay conexión a internet</string>
+    <string name="pull_to_refresh">Desliza hacia abajo para reintentar</string>
 </resources>

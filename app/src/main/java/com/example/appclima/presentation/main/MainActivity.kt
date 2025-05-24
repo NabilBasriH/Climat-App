@@ -53,6 +53,11 @@ class MainActivity : AppCompatActivity() {
     private var currentLon: Double = 0.0
     private val favouriteCityIds = mutableSetOf<Int>()
     private var isInBackground = false
+    private var gpsDialogAlreadyShown = false
+    private var hasShownNoNetworkToast = false
+    private var dataLoadedCount = 0
+    private var lastLoadedLat: Double? = null
+    private var lastLoadedLon: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -62,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.swipeRefresh.setOnRefreshListener {
-            if (checkNetwork()) {
+            if (Network.checkNetwork(this)) {
+                binding.networkView.noNetworkContainer.visibility = View.GONE
+                binding.shimmerView.shimmerLayout.startShimmer()
+                binding.shimmerView.shimmerLayout.visibility = View.VISIBLE
                 fetchLocationAndData()
             }
             binding.swipeRefresh.isRefreshing = false
@@ -75,18 +83,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (ubicacion.isPermissionGrantedOnce()) {
-            fetchLocationAndData()
-        } else {
-            ubicacion.enableLocation()
-        }
-
         setupAdapters()
 
         binding.toolbar.setTitle(R.string.app_name)
         setSupportActionBar(binding.toolbar)
-
-        if (!checkNetwork()) return
 
         viewModel = ViewModelProvider(this)[CitySearchViewModel::class.java]
         viewModel.suggestions.observe(this) { cities ->
@@ -106,13 +106,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchLocationAndData() {
-        if (!ubicacion.isGpsEnabled()) {
-            ubicacion.showGpsDisabledDialog()
+        if (!Network.checkNetwork(this)) {
+            binding.networkView.noNetworkContainer.visibility = View.VISIBLE
+            binding.locationView.noLocationContainer.visibility = View.GONE
+            binding.shimmerView.shimmerLayout.stopShimmer()
+            binding.shimmerView.shimmerLayout.visibility = View.GONE
+            binding.main.visibility = View.GONE
             return
         }
+
+        if (!ubicacion.isGpsEnabled()) {
+            binding.shimmerView.shimmerLayout.stopShimmer()
+            binding.shimmerView.shimmerLayout.visibility = View.GONE
+            binding.locationView.noLocationContainer.visibility = View.VISIBLE
+            if (gpsDialogAlreadyShown) return
+            ubicacion.showGpsDisabledDialog()
+            gpsDialogAlreadyShown = true
+            return
+        }
+
+        binding.networkView.noNetworkContainer.visibility = View.GONE
+        binding.locationView.noLocationContainer.visibility = View.GONE
+        binding.main.visibility = View.GONE
+        binding.shimmerView.shimmerLayout.startShimmer()
+        binding.shimmerView.shimmerLayout.visibility = View.VISIBLE
+
+        dataLoadedCount = 0
         ubicacion.getActualLocation { lat, lon ->
             currentLat = lat
             currentLon = lon
+            lastLoadedLat = lat
+            lastLoadedLon = lon
             getMainCity(lat, lon)
             getCities(lat, lon)
         }
@@ -151,6 +175,7 @@ class MainActivity : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         placeWeather(responseName, responseWeather)
+                        onDataLoaded()
                     }
                 } catch (e: Exception) {
                     Log.e("MAIN_ACTIVITY", "Error al obtener el tiempo: ${e.message}")
@@ -202,6 +227,7 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     adapterCityList.updateData(filteredCities)
+                    onDataLoaded()
                 }
             } catch (e: Exception) {
                 Log.e("CITY_WEATHER_RECYCLER", "Error: ${e.message}")
@@ -210,7 +236,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onItemSelected(name: String, lat: Double, lon: Double) {
-        if (!checkNetwork()) return
+        if (!Network.checkNetwork(this)) return
         val intent = Intent(this, DetailsActivity::class.java)
         intent.putExtra("NAME", name)
         intent.putExtra("LATITUDE", lat)
@@ -271,8 +297,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                hideKeyboard()
                 binding.rvSuggestions.visibility = View.GONE
                 searchView.setQuery("", false)
+                hasShownNoNetworkToast = false
                 // Asegurarse de que la flecha no vuelve a aparecer
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
                 supportActionBar?.setHomeButtonEnabled(false)
@@ -281,10 +309,26 @@ class MainActivity : AppCompatActivity() {
         })
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = true
+            override fun onQueryTextSubmit(newText: String?): Boolean {
+                if (!Network.checkNetwork(this@MainActivity)) return true
+                lastTextSearch = newText ?: ""
+                viewModel.searchCity(lastTextSearch)
+                return true
+            }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 lastTextSearch = newText ?: ""
+
+                if (!Network.hasNetwork(this@MainActivity)) {
+                    if (!hasShownNoNetworkToast) {
+                        Toast.makeText(this@MainActivity, R.string.no_network, Toast.LENGTH_SHORT)
+                            .show()
+                        hasShownNoNetworkToast = true
+                    }
+                    return true
+                } else {
+                    hasShownNoNetworkToast = false
+                }
                 viewModel.searchCity(lastTextSearch)
                 return true
             }
@@ -295,12 +339,12 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        binding.main.setOnTouchListener { _, _ ->
+        binding.main.setOnClickListener {
             if (!searchView.isIconified) {
+                hideKeyboard()
                 searchView.setQuery("", false)
                 searchMenuItem.collapseActionView()
             }
-            false
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -318,6 +362,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        } ?: run {
+            imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
+        }
+    }
+
+    private fun onDataLoaded() {
+        dataLoadedCount++
+        if (dataLoadedCount == 2) {
+            binding.shimmerView.shimmerLayout.stopShimmer()
+            binding.shimmerView.shimmerLayout.visibility = View.GONE
+            binding.main.visibility = View.VISIBLE
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -327,22 +389,16 @@ class MainActivity : AppCompatActivity() {
         ubicacion.handlePermissionResult(requestCode, grantResults)
     }
 
-    private fun checkNetwork(): Boolean {
-        if (!Network.hasNetwork(this)) {
-            Toast.makeText(this, R.string.no_network, Toast.LENGTH_SHORT).show()
-            return false
-        }
-        return true
-    }
-
     override fun onResume() {
         super.onResume()
         if (isInBackground) {
-            if (!checkNetwork()) return
+            if (!Network.checkNetwork(this)) return
+            if (!ubicacion.isGpsEnabled() && !gpsDialogAlreadyShown) ubicacion.showGpsDisabledDialog()
         }
-        if (ubicacion.isPermissionGrantedOnce()) {
-            fetchLocationAndData()
-        }
+        if (currentLat != 0.0 && currentLon != 0.0 &&
+                currentLat == lastLoadedLat && currentLon == lastLoadedLon) return
+        fetchLocationAndData()
+        isInBackground = true
     }
 
     override fun onPause() {

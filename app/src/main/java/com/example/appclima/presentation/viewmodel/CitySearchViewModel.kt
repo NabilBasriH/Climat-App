@@ -34,6 +34,5 @@ class CitySearchViewModel: ViewModel() {
                 _suggestions.value = emptyList()
             }
         }
-
     }
 }

@@ -25,7 +25,8 @@ class AppLocation(private val activity: Activity) {
     }
 
     var onPermissionGranted: (() -> Unit)? = null
-    var onPermissionDenied: (() -> Unit)? = null
+    private var onPermissionDenied: (() -> Unit)? = null
+    private var gpsDialog: AlertDialog? = null
 
     fun enableLocation() {
         if (isLocationPermissionGranted()) {
@@ -93,7 +94,9 @@ class AppLocation(private val activity: Activity) {
     }
 
     fun showGpsDisabledDialog() {
-        AlertDialog.Builder(activity)
+        if (gpsDialog?.isShowing == true) return
+
+        gpsDialog = AlertDialog.Builder(activity)
             .setTitle(R.string.activate_gps)
             .setMessage(R.string.activate_gps_message)
             .setPositiveButton(R.string.go_to_settings) { _, _ ->
@@ -101,6 +104,13 @@ class AppLocation(private val activity: Activity) {
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
+
+        gpsDialog?.show()
+    }
+
+    fun dismissGpsDialog() {
+        gpsDialog?.dismiss()
+        gpsDialog = null
     }
 
     @SuppressLint("MissingPermission")

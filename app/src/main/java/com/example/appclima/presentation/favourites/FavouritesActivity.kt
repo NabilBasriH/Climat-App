@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.appclima.R
+import com.example.appclima.core.utils.AppLocation
+import com.example.appclima.core.utils.Network
 import com.example.appclima.presentation.viewmodel.WeatherViewModel
 import com.example.appclima.databinding.ActivityFavouritesBinding
 import com.example.appclima.presentation.adapter.FavouriteCityAdapter
@@ -51,6 +53,7 @@ class FavouritesActivity : AppCompatActivity() {
     }
 
     private fun onItemSelected(name: String, lat: Double, lon: Double) {
+        if (!Network.checkNetwork(this)) return
         val intent = Intent(this, DetailsActivity::class.java)
         intent.putExtra("NAME", name)
         intent.putExtra("LATITUDE", lat)
