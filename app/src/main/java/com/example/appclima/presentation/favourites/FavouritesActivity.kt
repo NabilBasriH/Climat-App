@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.appclima.R
-import com.example.appclima.core.utils.AppLocation
 import com.example.appclima.core.utils.Network
 import com.example.appclima.presentation.viewmodel.WeatherViewModel
 import com.example.appclima.databinding.ActivityFavouritesBinding
@@ -105,12 +104,12 @@ class FavouritesActivity : AppCompatActivity() {
             true
         }
 
-        binding.main.setOnTouchListener { _, _ ->
+        binding.main.setOnClickListener {
             if (!searchView.isIconified) {
+                hideKeyboard()
                 searchView.setQuery("", false)
                 searchMenuItem.collapseActionView()
             }
-            false
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -124,6 +123,15 @@ class FavouritesActivity : AppCompatActivity() {
             }
 
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        } ?: run {
+            imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
         }
     }
 }
