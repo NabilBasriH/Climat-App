@@ -10,6 +10,8 @@ import com.example.appclima.databinding.ItemListCityFavouriteBinding
 import com.example.appclima.data.local.model.FavouriteEntity
 
 class FavouriteCityAdapter(private var favouriteCities: List<FavouriteEntity>, private val onClickListener: (FavouriteEntity) -> Unit): RecyclerView.Adapter<FavouriteCityAdapter.FavouriteCityHolder>() {
+    private var filteredCities: List<FavouriteEntity> = favouriteCities.toList()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,10 +22,10 @@ class FavouriteCityAdapter(private var favouriteCities: List<FavouriteEntity>, p
     }
 
     override fun onBindViewHolder(holder: FavouriteCityHolder, position: Int) {
-        holder.render(favouriteCities[position], onClickListener)
+        holder.render(filteredCities[position], onClickListener)
     }
 
-    override fun getItemCount(): Int = favouriteCities.size
+    override fun getItemCount(): Int = filteredCities.size
 
     class FavouriteCityHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemListCityFavouriteBinding.bind(view)
@@ -44,6 +46,18 @@ class FavouriteCityAdapter(private var favouriteCities: List<FavouriteEntity>, p
 
     fun updateData(newFavouritesCities: List<FavouriteEntity>) {
         favouriteCities = newFavouritesCities
+        filteredCities = newFavouritesCities
+        notifyDataSetChanged()
+    }
+
+    fun filterCities(query: String?) {
+        filteredCities = if (query.isNullOrBlank()) {
+            favouriteCities
+        }else {
+            favouriteCities.filter {
+                it.name.contains(query, ignoreCase = true)
+            }
+        }
         notifyDataSetChanged()
     }
 }

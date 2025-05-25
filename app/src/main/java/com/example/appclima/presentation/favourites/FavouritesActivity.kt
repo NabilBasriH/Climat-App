@@ -95,7 +95,7 @@ class FavouritesActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 lastTextSearch = newText ?: ""
-                //viewModel.searchCity(lastTextSearch)
+                adapter.filterCities(lastTextSearch)
                 return true
             }
         })
