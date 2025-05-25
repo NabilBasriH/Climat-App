@@ -1,4 +1,4 @@
-# 🌦️ Climat
+# ⛅ Climat
 
 Android application that shows the current weather and nearby cities based on the user's location. Built with Kotlin and modern Android architecture using Retrofit, LiveData, and more.
 
