@@ -67,12 +67,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.swipeRefresh.setOnRefreshListener {
-            if (Network.checkNetwork(this)) {
-                binding.networkView.noNetworkContainer.visibility = View.GONE
-                binding.shimmerView.shimmerLayout.startShimmer()
-                binding.shimmerView.shimmerLayout.visibility = View.VISIBLE
-                fetchLocationAndData()
-            }
+            fetchLocationAndData()
             binding.swipeRefresh.isRefreshing = false
         }
 
@@ -391,10 +386,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (isInBackground) {
-            if (!Network.checkNetwork(this)) return
-            if (!ubicacion.isGpsEnabled() && !gpsDialogAlreadyShown) ubicacion.showGpsDisabledDialog()
-        }
         if (currentLat != 0.0 && currentLon != 0.0 &&
                 currentLat == lastLoadedLat && currentLon == lastLoadedLon) return
         fetchLocationAndData()
