@@ -49,7 +49,7 @@ The app allows users to search for cities, view detailed weather information, an
 - [OpenWeatherMap API](https://openweathermap.org/api) – for weather data
 - [OpenUV API](https://www.openuv.io/) – for UV index data
 
-> 💡 Both APIs require an API key. Sign up on their websites to get your own.
+> 💡 Both APIs require an API key. Sign up on their websites to get your own (it's free!).
 
 ---
 
