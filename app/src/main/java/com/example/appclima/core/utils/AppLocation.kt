@@ -5,14 +5,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.provider.Settings
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.appclima.R
 import com.google.android.gms.location.CurrentLocationRequest
@@ -28,49 +26,9 @@ class AppLocation(private val activity: Activity) {
     private var onPermissionDenied: (() -> Unit)? = null
     private var gpsDialog: AlertDialog? = null
 
-    fun enableLocation() {
-        if (isLocationPermissionGranted()) {
-            Log.d("AppLocation", "Permiso ya fue concedido")
-            onPermissionGranted?.invoke()
-        } else {
-            requestLocationPermission()
-        }
-    }
-
     private fun isLocationPermissionGranted(): Boolean = ContextCompat.checkSelfPermission(
         activity, Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
-
-
-    private fun requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        ) {
-            showPermissionRationaleDialog()
-        } else {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_CODE_LOCATION
-            )
-        }
-    }
-
-    private fun showPermissionRationaleDialog() {
-        AlertDialog.Builder(activity)
-            .setTitle(R.string.activate_location_permission)
-            .setMessage(R.string.activate_location_permission_message)
-            .setPositiveButton(R.string.go_to_settings) { _, _ ->
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", activity.packageName, null)
-                }
-                activity.startActivity(intent)
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
 
     fun handlePermissionResult(requestCode: Int, grantResults: IntArray) {
         if (requestCode == REQUEST_CODE_LOCATION) {
@@ -108,11 +66,6 @@ class AppLocation(private val activity: Activity) {
         gpsDialog?.show()
     }
 
-    fun dismissGpsDialog() {
-        gpsDialog?.dismiss()
-        gpsDialog = null
-    }
-
     @SuppressLint("MissingPermission")
     fun getActualLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
         if (!isLocationPermissionGranted()) {
@@ -121,7 +74,8 @@ class AppLocation(private val activity: Activity) {
         }
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.activity)
-        val request = CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
+        val request =
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
         fusedLocationClient.getCurrentLocation(request, null)
             .addOnSuccessListener { location ->
@@ -142,8 +96,10 @@ class AppLocation(private val activity: Activity) {
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(activity,
-                    "${R.string.location_error}: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity,
+                    "${R.string.location_error}: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
             }
     }
 }

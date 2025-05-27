@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.appclima.R
 
 class Network {

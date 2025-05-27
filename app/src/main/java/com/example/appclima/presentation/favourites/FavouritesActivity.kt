@@ -10,13 +10,13 @@ import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.appclima.R
 import com.example.appclima.core.utils.Network
-import com.example.appclima.presentation.viewmodel.WeatherViewModel
 import com.example.appclima.databinding.ActivityFavouritesBinding
 import com.example.appclima.presentation.adapter.FavouriteCityAdapter
 import com.example.appclima.presentation.details.DetailsActivity
+import com.example.appclima.presentation.viewmodel.WeatherViewModel
 
 class FavouritesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFavouritesBinding
@@ -42,7 +42,7 @@ class FavouritesActivity : AppCompatActivity() {
         adapter = FavouriteCityAdapter(emptyList()) { city ->
             onItemSelected(city.name, city.lat, city.lon)
         }
-        binding.rvCities.layoutManager = GridLayoutManager(this, 2)
+        binding.rvCities.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.rvCities.adapter = adapter
 
         viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
