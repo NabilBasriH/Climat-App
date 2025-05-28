@@ -40,7 +40,14 @@ class SearchCityAdapter(
             isFavourite: Boolean
             ) {
             binding.tvNombre.text = city.name
-            binding.tvPais.text = city.state ?: ""
+
+            val state = city.state
+            if (!state.isNullOrEmpty()) {
+                binding.tvPais.text = state
+                binding.tvPais.visibility = View.VISIBLE
+            } else {
+                binding.tvPais.visibility = View.GONE
+            }
             binding.tvPaisCorto.text = city.country
 
             val iconRes = if (isFavourite) R.drawable.icon_bookmark else R.drawable.icon_bookmark_empty
