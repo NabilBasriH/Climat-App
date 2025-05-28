@@ -8,13 +8,10 @@ The app allows users to search for cities, view detailed weather information, an
 
 ## 🖼️ Screenshots
 
-| Home | Details |
-|------|---------|
-| ![Home](screenshots/home.png) | ![Details](screenshots/detalle.png) |
+<img src="screenshots/climat_screenshot00-portrait.png" width="250" /> &nbsp;&nbsp;&nbsp; <img src="screenshots/climat_screenshot01-portrait.png" width="250" /> &nbsp;&nbsp;&nbsp; <img src="screenshots/climat_screenshot03-portrait.png" width="250" />
 
-| Nearby Cities | Search City | Favorites |
-|----------------|-------------|-----------|
-| ![Nearby](screenshots/cercanas.png) | ![Search](screenshots/buscar.png) | ![Favorites](screenshots/favoritos.png) |
+---
+<img src="screenshots/climat_screenshot02-portrait.png" width="250" /> &nbsp;&nbsp;&nbsp; <img src="screenshots/climat_screenshot04-portrait.png" width="250" />
 
 ---
 
