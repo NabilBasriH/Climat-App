@@ -3,9 +3,36 @@
 
     <string name="item_buscar_name">Buscar</string>
     <string name="item_favorito_name">Favoritos</string>
-    
-    <string name="temp_format">%.1fºC</string>
+
+    <string name="temp_format">%dºC</string>
+    <string name="temp_max_format">Max: %1$dºC</string>
+    <string name="temp_min_format">Min: %1$dºC</string>
+    <string name="temp_percent_format">%d%%</string>
+    <string name="temp_rain_format">%1$d mm/h</string>
+    <string name="temp_speed_format">%d km/h</string>
+    <string name="temp_uv_format">%.2f</string>
+
     <string name="iconos_del_clima_sol_nubes_lluvia">Íconos del clima (sol, nubes, lluvia)</string>
     <string name="otras_ciudades">Otras Ciudades</string>
     <string name="lista_de_ciudades_disponibles">Lista de ciudades disponibles</string>
+    <string name="sensacion">Sensación</string>
+    <string name="nubes">Nubes</string>
+    <string name="humedad">Humedad</string>
+    <string name="lluvia">Lluvia</string>
+    <string name="viento">Viento</string>
+    <string name="uv">UV</string>
+    <string name="min_three_letter">Mínimo tres letras</string>
+    <string name="icono_guardar">Icono para guardar</string>
+    <string name="lista_de_ciudades_favoritas">Lista de ciudades favoritas</string>
+
+    <string name="cancel">Cancelar</string>
+    <string name="activate_gps">Activar GPS</string>
+    <string name="activate_gps_message">El GPS está desactivado. Por favor, actívalo para obtener tu ubicación.</string>
+    <string name="go_to_settings">Ir a Ajustes</string>
+    <string name="location_not_found">No se pudo obtener la ubicación</string>
+    <string name="location_error">Error al obtener la ubicación</string>
+    <string name="activate_location_permission">Activar Permisos Ubicación</string>
+    <string name="activate_location_permission_message">Los permisos están desactivados. Por favor, actívelos para poder acceder a tu ubicación.</string>
+    <string name="no_network">No hay conexión a internet</string>
+    <string name="pull_to_refresh">Desliza hacia abajo para reintentar</string>
 </resources>

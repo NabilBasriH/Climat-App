@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="darker_grey">#616161</color>
 
     <!--Color app-->
     <color name="color_primary">#3ED5FF</color>
@@ -12,11 +13,13 @@
     <!--Color CardViews-->
     <color name="cardViewBackground_opacity">#B300C8FF</color>
     <color name="cardViewBackground">#00C8FF</color>
+    <color name="cardViewBackground_transparent">#00FFFFFF</color>
 
     <!--Color Texto-->
     <color name="gris_subtitulo">#333333</color>
     <color name="azul_marino_ciudad">#2C3E50</color>
     <color name="gris_ciudad">#424242</color>
+    <color name="gris_comunidad_ciudad">#555555</color>
 
     <color name="color_grados">#000000</color>
     <color name="color_ciudad">#FFFFFF</color>
