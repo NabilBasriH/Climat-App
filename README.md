@@ -31,6 +31,7 @@ The app allows users to search for cities, view detailed weather information, an
 ## 🛠️ Built With
 
 - **Kotlin**
+- **Views XML**
 - **Retrofit** – for calling OpenWeatherMap and OpenUV APIs
 - **Room** – to store favorite cities
 - **Coroutines** – for asynchronous tasks
